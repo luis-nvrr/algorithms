@@ -9,50 +9,63 @@ func main() {
 	s1 := NewSatellite([]string{"", "este", "es", "un", "mensaje"})
 	s2 := NewSatellite([]string{"este", "", "un", "mensaje"})
 	s3 := NewSatellite([]string{"", "", "es", "", "mensaje"})
-	frequencies := CountFrequencies(s1.message, s2.message, s3.message)
+
+	frequencies := CountFrequenciesInPosition(s1.message, s2.message, s3.message)
 	message := buildMessage(frequencies)
 	fmt.Println(message)
 }
 
 func buildMessage(frequencies []map[string]int) string {
 	var message []string
-	for i, f := range frequencies {
-		max_k := ""
-		max_v := -1
-		for k, v := range f {
-			if k == "" {
-				continue
-			}
-
-			if i-1 >= 0 && i-1 < len(message) && k == message[i-1] {
-				continue
-			}
-
-			if v > max_v {
-				max_v = v
-				max_k = k
-			}
+	for i := 0; i < len(frequencies); i++ {
+		word := GetBestWord(frequencies[i])
+		for IsSameWordAsBefore(i, word, message) && len(frequencies[i]) > 0 {
+			delete(frequencies[i], word)
+			word = GetBestWord(frequencies[i])
 		}
-		if max_k != "" {
-			message = append(message, max_k)
+		if word != "" {
+			message = append(message, word)
 		}
 	}
 	return strings.Join(message, " ")
 }
 
-func CountFrequencies(msgs ...[]string) []map[string]int {
+func IsSameWordAsBefore(i int, word string, message []string) bool {
+	return i >= 1 && i <= len(message) && word == message[i-1]
+}
+
+func GetBestWord(f map[string]int) string {
+	max_k := ""
+	max_v := -1
+	for k, v := range f {
+		if v > max_v {
+			max_v = v
+			max_k = k
+		}
+	}
+	return max_k
+}
+
+func CountFrequenciesInPosition(msgs ...[]string) []map[string]int {
 	maxLength := GetMaxMessageLenght(msgs...)
 	words := []map[string]int{}
 	for i := 0; i < maxLength; i++ {
 		ranking := make(map[string]int, maxLength)
 		for _, msg := range msgs {
 			if i >= len(msg) {
-				break
+				continue
+			}
+			if msg[i] == "" {
+				continue
 			}
 			ranking[msg[i]]++
 		}
-		words = append(words, ranking)
+		if len(ranking) != 0 {
+			words = append(words, ranking)
+		}
+
 	}
+	fmt.Println(words)
 	return words
 }
 
