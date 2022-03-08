@@ -19,7 +19,7 @@ func buildMessage(frequencies []map[string]int) string {
 	var message []string
 	for i := 0; i < len(frequencies); i++ {
 		word := GetBestWord(frequencies[i])
-		for IsSameWordAsBefore(i, word, message) && len(frequencies[i]) > 0 {
+		for IsSameWordAsBefore(word, message) && len(frequencies[i]) > 0 {
 			delete(frequencies[i], word)
 			word = GetBestWord(frequencies[i])
 		}
@@ -30,8 +30,8 @@ func buildMessage(frequencies []map[string]int) string {
 	return strings.Join(message, " ")
 }
 
-func IsSameWordAsBefore(i int, word string, message []string) bool {
-	return i >= 1 && i <= len(message) && word == message[i-1]
+func IsSameWordAsBefore(word string, message []string) bool {
+	return len(message) > 0 && word == message[len(message)-1]
 }
 
 func GetBestWord(f map[string]int) string {
