@@ -4,13 +4,15 @@ type RunLengthEncodedString = [string, number][];
 // "aaaabbbbccc" => [["a", 4], ["b", 3], ["c", 3]]
 //
 // see https://en.wikipedia.org/wiki/Run-length_encoding
+//
+// O(2n)
 export function rle(plain: String): RunLengthEncodedString {
   let charactersCount:Map<string, number> = countCharacters(plain) 
 
   let result:RunLengthEncodedString = []
   charactersCount.forEach((count:number, character:string) => result.push([character, count]))
 
-  return result;
+  return result
 }
 
 function countCharacters(plain: String): Map<string, number> {
@@ -20,7 +22,7 @@ function countCharacters(plain: String): Map<string, number> {
   return count
 }
 
-function incrementCharacterCountByOne(character:string, countMap:Map<string, number>) {
-  let currentCount = countMap.get(character) || 0;
+function incrementCharacterCountByOne(character: string, countMap: Map<string, number>) {
+  let currentCount = countMap.get(character) || 0
   countMap.set(character, currentCount+1)
 }
